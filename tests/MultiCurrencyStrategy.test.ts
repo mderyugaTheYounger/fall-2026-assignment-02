@@ -39,7 +39,7 @@ describe('MultiCurrencyStrategy (Feature 5)', () => {
     ];
 
     const result = await strategy.execute(testInput, 'EUR');
-
+    console.log(result);
     expect(spy).toHaveBeenCalled();
     expect(result).toContain('72.00 EUR'); // 80 * 0.9, target currency EUR
   });
@@ -52,7 +52,7 @@ describe('MultiCurrencyStrategy (Feature 5)', () => {
       { id: '1', date: '2026-09-14', amount: 90.00, category: 'Expense', description: 'Test_Description', status: 'completed'}
     ];
     const result = await strategy.execute(testInput);
-
+    console.log(result);
     expect(spy).toHaveBeenCalled();
     expect(result).toContain('81.00 EUR'); // 90 * 0.9, target currency EUR as no input currency
   });
@@ -64,10 +64,7 @@ describe('MultiCurrencyStrategy (Feature 5)', () => {
     const testInput: Transaction[] = [
       { id: '1', date: '2026-09-14', amount: 90.00, category: 'Expense', description: 'Test_Description', status: 'completed'}
     ];
-
-    expect(() => strategy.execute(testInput, RUB)).toThrow(
-      new Error('Invalid Currency: RUB')
-    );
+    await expect(strategy.execute(testInput, 'RUB')).rejects.toThrow('Invalid Currency: RUB');
 
   });
 
