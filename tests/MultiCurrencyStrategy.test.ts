@@ -30,15 +30,46 @@ describe('MultiCurrencyStrategy (Feature 5)', () => {
   //   expect(result).toContain('Balance: 45.00 EUR');
   // });
 
-  it.todo('should parse exchange rates and use customParam target currency');
+  it('should parse exchange rates and use customParam target currency', async () => {
+    const mockRates = { base: 'USD', rates: { EUR: 0.90 } };
+    const spy = vi.spyOn(ExchangeRateService, 'getExchangeRates').mockResolvedValue(mockRates);
 
-  it.todo(
-    'should default to EUR conversion if currency param is missing or invalid',
-  );
+    const testInput: Transaction[] = [
+      { id: '1', date: '2026-09-14', amount: 80.00, category: 'Expense', description: 'Test_Description', status: 'completed'},
+    ];
 
-  it.todo(
-    'should throw an error if the target currency does not exist in exchange rates',
-  );
+    const result = await strategy.execute(testInput, 'EUR');
+
+    expect(spy).toHaveBeenCalled();
+    expect(result).toContain('72.00 EUR'); // 80 * 0.9, target currency EUR
+  });
+
+  it('should default to EUR conversion if currency param is missing or invalid', async () => {
+    const mockRates = { base: 'USD', rates: { EUR: 0.90 } };
+    const spy = vi.spyOn(ExchangeRateService, 'getExchangeRates').mockResolvedValue(mockRates);
+
+    const testInput: Transaction[] = [
+      { id: '1', date: '2026-09-14', amount: 90.00, category: 'Expense', description: 'Test_Description', status: 'completed'}
+    ];
+    const result = await strategy.execute(testInput);
+
+    expect(spy).toHaveBeenCalled();
+    expect(result).toContain('81.00 EUR'); // 90 * 0.9, target currency EUR as no input currency
+  });
+
+  it('should throw an error if the target currency does not exist in exchange rates', async () => {
+    const mockRates = { base: 'USD', rates: { EUR: 0.90 } };
+    const spy = vi.spyOn(ExchangeRateService, 'getExchangeRates').mockResolvedValue(mockRates);
+
+    const testInput: Transaction[] = [
+      { id: '1', date: '2026-09-14', amount: 90.00, category: 'Expense', description: 'Test_Description', status: 'completed'}
+    ];
+
+    expect(() => strategy.execute(testInput, RUB)).toThrow(
+      new Error('Invalid Currency: RUB')
+    );
+
+  });
 
   it.todo(
     'should accurately convert individual transaction amounts to the target currency',

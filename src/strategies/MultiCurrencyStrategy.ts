@@ -13,6 +13,7 @@ export class MultiCurrencyStrategy implements AuditStrategy {
   ): Promise<string> {
     // TODO: Feature 5 - Implement this strategy.
     // 1. Call ExchangeRateService.getExchangeRates() asynchronously.
+    const rates = await ExchangeRateService.getExchangeRates();
     // 2. Identify the target currency from `customParam` (default to 'EUR' if invalid/not provided).
     // 3. Look up the exchange rate for the target currency (throw an error if not found in rates).
     // 4. Convert all transaction amounts to the target currency.
