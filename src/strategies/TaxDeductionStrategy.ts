@@ -28,6 +28,11 @@ export class TaxDeductionStrategy implements AuditStrategy {
       config.deductibleCategories.includes(transaction.category),
     );
 
+    const totalDeductions = deductibleTransactions.reduce(
+      (total, transaction) => total + Math.abs(transaction.amount),
+      0,
+    );
+
     const itemizedDeductions = deductibleTransactions
       .map(
         (transaction) =>
@@ -35,6 +40,9 @@ export class TaxDeductionStrategy implements AuditStrategy {
       )
       .join('\n');
 
-      return itemizedDeductions;
+      return `${itemizedDeductions}
+      Deductions: $${totalDeductions.toFixed(2)}`;
   }
+
+
 }
