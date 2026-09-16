@@ -12,35 +12,33 @@ export class TaxDeductionStrategy implements AuditStrategy {
     transactions: Transaction[],
     customParam?: string,
   ): Promise<string> {
-    // TODO: Feature 4 - Implement this strategy.
-    // 1. Call TaxConfigService.getTaxConfig() asynchronously.
-    // 2. Filter expenses (amount < 0) that belong to eligible tax-deductible categories.
-    // 3. Sum total deductible expenses.
-    // 4. Estimate tax savings based on the standard tax rate: total deductible * taxRate.
-    // 5. Estimate sales tax/VAT paid on NON-deductible expenses using standard tax rate.
-    // 6. Format and return a text-based audit report detailing total deductions, savings, VAT estimates, and eligible transactions.
-
+    // Get current tax configuration
     const config = await TaxConfigService.getTaxConfig();
 
+    // Find eligible deductible expenses
     const deductibleTransactions = transactions.filter(
       (transaction) =>
         transaction.amount < 0 &&
       config.deductibleCategories.includes(transaction.category),
     );
 
+    // Calculate total deductions
     const totalDeductions = deductibleTransactions.reduce(
       (total, transaction) => total + Math.abs(transaction.amount),
       0,
     );
 
+    // Estimate tax savings
     const estimatedTaxSavings = totalDeductions * config.standardTaxRate;
 
+    // Find non-deductible expenses
     const nonDeductibleTransactions = transactions.filter(
       (transaction) =>
         transaction.amount < 0 &&
         !config.deductibleCategories.includes(transaction.category),
     )
 
+    // Format deductible transactions for report
     const itemizedDeductions = deductibleTransactions
       .map(
         (transaction) =>
@@ -48,22 +46,23 @@ export class TaxDeductionStrategy implements AuditStrategy {
       )
       .join('\n');
 
+    // Calculate non-deductible expense total
     const nonDeductibleTotal = nonDeductibleTransactions.reduce(
       (total, transaction) => total + Math.abs(transaction.amount),
       0,
     );
 
+    // Estimate VAT on non-deductible expenses
     const estimatedVat = nonDeductibleTotal * config.standardTaxRate;
 
+    // Return formatted audit report
     return `Tax & Deductions Audit
-      
+        
     Eligible Deductions: 
     ${itemizedDeductions}
-    
+
     Deductions: $${totalDeductions.toFixed(2)}
     Savings: $${estimatedTaxSavings.toFixed(2)}
     VAT: $${estimatedVat.toFixed(2)}`;
   }
-
-
 }
