@@ -55,10 +55,12 @@ export class TaxDeductionStrategy implements AuditStrategy {
 
     const estimatedVat = nonDeductibleTotal * config.standardTaxRate;
 
-      return `${itemizedDeductions}
-      Deductions: $${totalDeductions.toFixed(2)}
-      Savings: $${estimatedTaxSavings.toFixed(2)}
-      VAT: $${estimatedVat.toFixed(2)}`;
+    return `Tax & Deductions Audit
+      
+    Eligible Deductions: ${itemizedDeductions}
+    Deductions: $${totalDeductions.toFixed(2)}
+    Savings: $${estimatedTaxSavings.toFixed(2)}
+    VAT: $${estimatedVat.toFixed(2)}`;
   }
 
 

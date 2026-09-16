@@ -72,7 +72,14 @@ describe('TaxDeductionStrategy (Feature 4)', () => {
     expect(result).toContain('VAT: $10.00')
   });
 
-  it.todo(
-    'should structure report to show both aggregates and itemized deductible transactions',
-  );
+  it('should structure report to show both aggregates and itemized deductible transactions', async () => {
+    const result = await strategy.execute(testTransactions);
+
+    expect(result).toContain('Donation: $200.00');
+    expect(result).toContain('Doctor Visit: $150.00');
+
+    expect(result).toContain('Deductions: $350.00');
+    expect(result).toContain('Savings: $35.00');
+    expect(result).toContain('VAT: $10.00')
+  });
 });
