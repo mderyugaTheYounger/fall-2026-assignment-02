@@ -1,3 +1,4 @@
+import { isContext } from 'vm';
 import { Transaction } from '../models.js';
 import { TaxConfigService } from '../services/TaxConfigService.js';
 import { AuditStrategy } from './AuditStrategy.js';
@@ -19,6 +20,21 @@ export class TaxDeductionStrategy implements AuditStrategy {
     // 5. Estimate sales tax/VAT paid on NON-deductible expenses using standard tax rate.
     // 6. Format and return a text-based audit report detailing total deductions, savings, VAT estimates, and eligible transactions.
 
-    throw new Error('Method not implemented.');
+    const config = await TaxConfigService.getTaxConfig();
+
+    const deductibleTransactions = transactions.filter(
+      (transaction) =>
+        transaction.amount < 0 &&
+      config.deductibleCategories.includes(transaction.category),
+    );
+
+    const itemizedDeductions = deductibleTransactions
+      .map(
+        (transaction) =>
+          `${transaction.description}: $${Math.abs(transaction.amount).toFixed(2)}`,
+      )
+      .join('\n');
+
+      return itemizedDeductions;
   }
 }
