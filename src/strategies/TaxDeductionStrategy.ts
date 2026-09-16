@@ -33,6 +33,8 @@ export class TaxDeductionStrategy implements AuditStrategy {
       0,
     );
 
+    const estimatedTaxSavings = totalDeductions * config.standardTaxRate;
+
     const itemizedDeductions = deductibleTransactions
       .map(
         (transaction) =>
@@ -41,7 +43,8 @@ export class TaxDeductionStrategy implements AuditStrategy {
       .join('\n');
 
       return `${itemizedDeductions}
-      Deductions: $${totalDeductions.toFixed(2)}`;
+      Deductions: $${totalDeductions.toFixed(2)};
+      Savings: $${estimatedTaxSavings.toFixed(2)}`;
   }
 
 

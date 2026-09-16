@@ -60,7 +60,11 @@ describe('TaxDeductionStrategy (Feature 4)', () => {
     expect(result).toContain('Deductions: $350.00');
 });
 
-  it.todo('should calculate estimated tax savings using standardTaxRate');
+  it('should calculate estimated tax savings using standardTaxRate', async () => {
+    const result = await strategy.execute(testTransactions);
+
+    expect(result).toContain('Savings: $35.00');
+  });
 
   it.todo(
     'should calculate estimated VAT/sales tax paid on non-deductible expense transactions',
