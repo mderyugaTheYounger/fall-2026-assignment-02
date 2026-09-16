@@ -57,7 +57,9 @@ export class TaxDeductionStrategy implements AuditStrategy {
 
     return `Tax & Deductions Audit
       
-    Eligible Deductions: ${itemizedDeductions}
+    Eligible Deductions: 
+    ${itemizedDeductions}
+    
     Deductions: $${totalDeductions.toFixed(2)}
     Savings: $${estimatedTaxSavings.toFixed(2)}
     VAT: $${estimatedVat.toFixed(2)}`;
