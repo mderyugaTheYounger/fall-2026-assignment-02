@@ -66,9 +66,11 @@ describe('TaxDeductionStrategy (Feature 4)', () => {
     expect(result).toContain('Savings: $35.00');
   });
 
-  it.todo(
-    'should calculate estimated VAT/sales tax paid on non-deductible expense transactions',
-  );
+  it('should calculate estimated VAT/sales tax paid on non-deductible expense transactions', async () => {
+    const result = await strategy.execute(testTransactions);
+
+    expect(result).toContain('VAT: $10.00')
+  });
 
   it.todo(
     'should structure report to show both aggregates and itemized deductible transactions',

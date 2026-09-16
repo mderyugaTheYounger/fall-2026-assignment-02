@@ -35,6 +35,12 @@ export class TaxDeductionStrategy implements AuditStrategy {
 
     const estimatedTaxSavings = totalDeductions * config.standardTaxRate;
 
+    const nonDeductibleTransactions = transactions.filter(
+      (transaction) =>
+        transaction.amount < 0 &&
+        !config.deductibleCategories.includes(transaction.category),
+    )
+
     const itemizedDeductions = deductibleTransactions
       .map(
         (transaction) =>
@@ -42,9 +48,17 @@ export class TaxDeductionStrategy implements AuditStrategy {
       )
       .join('\n');
 
+    const nonDeductibleTotal = nonDeductibleTransactions.reduce(
+      (total, transaction) => total + Math.abs(transaction.amount),
+      0,
+    );
+
+    const estimatedVat = nonDeductibleTotal * config.standardTaxRate;
+
       return `${itemizedDeductions}
-      Deductions: $${totalDeductions.toFixed(2)};
-      Savings: $${estimatedTaxSavings.toFixed(2)}`;
+      Deductions: $${totalDeductions.toFixed(2)}
+      Savings: $${estimatedTaxSavings.toFixed(2)}
+      VAT: $${estimatedVat.toFixed(2)}`;
   }
 
 
